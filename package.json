@@ -1,0 +1,32 @@
+{
+  "name": "notion-schema",
+  "version": "0.1.0",
+  "description": "Simple wrapper for @notionhq/client to parse Notion databases entries to follow a simple defined schema",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "start": "node dist/index.js",
+    "test": "node dist/test.js",
+    "build_start": "npm run build && npm run start",
+    "build_test": "npm run build && npm run test"
+  },
+  "devDependencies": {
+    "@types/twemoji-parser": "^13.1.4",
+    "tsdown": "^0.15.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@notionhq/client": "^5.2.1",
+    "twemoji-parser": "^14.0.0"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "notion-schema",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Simple wrapper for @notionhq/client to parse Notion databases entries to follow a simple defined schema",
   "type": "module",
   "repository": {

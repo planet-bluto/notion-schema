@@ -1,4 +1,37 @@
 import { Client, DatabaseObjectResponse, PageObjectResponse } from '@notionhq/client'
+import axios from "axios";
+
+class Notion {
+  _token: string;
+  _api_host: string;
+  constructor(token: string) {
+    this._token = token
+    this._api_host = "https://api.notion.com/v1"
+  }
+
+  async _baseRequest(method: string, path: string, data?: {[index: string]: any}) {
+    let res = await axios({
+      method,
+      url: (this._api_host+path),
+      headers: {
+        "Authorization": `Bearer ${this._token}`,
+        "Content-Type": "application/json",
+        "Notion-Version": "2025-09-03",
+      },
+      data
+    })
+
+    return res.data
+  }
+
+  async get(path: string) {
+    return this._baseRequest("GET", path)
+  }
+
+  async post(path: string, data = {}) {
+    return this._baseRequest("POST", path, data)
+  }
+}
 
 import { parse } from 'twemoji-parser';
 
@@ -9,7 +42,7 @@ export interface EntriesOpts {
 export interface SchemaRowOpts {
   transformer?: (params: {[index: string]: any}) => any,
   flag?: string;
-  client?: Client;
+  client?: Notion;
   schema?: SchemaRow[]
 }
 
@@ -105,7 +138,7 @@ async function parseNode(propNode: typeof dummy_page.properties[0], opts?: Schem
     case "phone_number":
       return propNode.phone_number
     case "relation":
-      let relationPageProms = propNode.relation.map(relation => opts?.client?.pages.retrieve({page_id: relation.id}))
+      let relationPageProms = propNode.relation.map(relation => opts?.client?.get("/pages/"+relation.id))
 
       let relationPages = []
       for await (const prom of relationPageProms) {
@@ -217,13 +250,14 @@ async function applyPageSchema(entity: DatabaseObjectResponse | PageObjectRespon
 }
 
 export class NotionSchemaClass {
-  notion: Client;
+  notion: Notion;
   constructor(auth: string) {
-    this.notion = new Client({auth})
+    this.notion = new Notion(auth)
   }
 
   async entries(database_id: string, schema: SchemaRow[], opts?: EntriesOpts): Promise<any | null> {
-      const database: DatabaseObjectResponse = (await this.notion.databases.retrieve({database_id}) as DatabaseObjectResponse)
+      const database: DatabaseObjectResponse = (await this.notion.get("/databases/"+database_id) as DatabaseObjectResponse)
+      console.log(database.data_sources)
 
       let passthru = {client: this.notion}
 
@@ -238,10 +272,10 @@ export class NotionSchemaClass {
       var cursor = undefined
 
       while (has_more) {
-        let opts: any = {data_source_id: database.data_sources[0].id}
+        let opts: any = {}
         if (cursor) { opts["start_cursor"] = cursor }
         // console.log("Fetching...")
-        let query = await this.notion.dataSources.query(opts)
+        let query = await this.notion.post(`/data_sources/${database.data_sources[0].id}/query`, opts)
         pages = pages.concat(query.results as PageObjectResponse[])
         has_more = query.has_more
         cursor = query.next_cursor

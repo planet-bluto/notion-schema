@@ -1,14 +1,15 @@
+import "dotenv/config"
 import { batch, Field, NotionSchemaClass, PropField } from "./index";
 
-const schema = new NotionSchemaClass("not my secret")
+const schema = new NotionSchemaClass(process.env["NOTION_SECRET"] ?? "")
 
 let CONTENT
 
 getContent()
 
-async function getContent() {
+async function getContent() { 
   CONTENT = await batch({
-    Art: schema.entries("not my database id", [
+    Art: schema.entries((process.env["NOTION_DATABASE"] ?? ""), [
       Field("id"),
       PropField("Name", "title"),
       Field("icon"),

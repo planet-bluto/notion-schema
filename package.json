@@ -1,8 +1,11 @@
 {
   "name": "notion-schema",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Simple wrapper for @notionhq/client to parse Notion databases entries to follow a simple defined schema",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/planet-bluto/notion-schema"
+  },
   "files": [
     "dist"
   ],
@@ -21,12 +24,15 @@
     "build_test": "npm run build && npm run test"
   },
   "devDependencies": {
+    "@types/node": "^24.8.1",
     "@types/twemoji-parser": "^13.1.4",
+    "dotenv": "^17.2.3",
     "tsdown": "^0.15.6",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "@notionhq/client": "^5.2.1",
+    "axios": "^1.12.2",
     "twemoji-parser": "^14.0.0"
   }
 }

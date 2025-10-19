@@ -257,7 +257,7 @@ export class NotionSchemaClass {
 
   async entries(database_id: string, schema: SchemaRow[], opts?: EntriesOpts): Promise<any | null> {
       const database: DatabaseObjectResponse = (await this.notion.get("/databases/"+database_id) as DatabaseObjectResponse)
-      console.log(database.data_sources)
+      // console.log(database.data_sources)
 
       let passthru = {client: this.notion}
 
